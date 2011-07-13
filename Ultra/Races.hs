@@ -45,7 +45,9 @@ races =
    , Trail     "Mongolian Sunrise to Sunset" 100000 125100
    , Trail     "Spartathlon"                 246000 280000
 
-   , Interval "Ultraintervalli, 8x13km" 8 (3 * oneHour) 13000
+   , Interval "Ultraintervalli, 8x13km / 3h " 8 (3 * oneHour) 13000
+   , Interval "Tonnit, 5x1km / 6min" 8 (6 * 60.0) 1000
+
    ]
   
 
