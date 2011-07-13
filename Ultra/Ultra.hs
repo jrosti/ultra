@@ -13,6 +13,12 @@ data Parameters = Parameters {   pvalueMiddle :: Double
                              ,   pvalueUltra :: Double
                              }
 
+data PredictorType = Normal | Kouros
+
+normalParams = Parameters 1.12 1.07 1.3
+kourosParams = Parameters 1.12 1.07 1.2
+
+
 -- middle-to-normal distance cross-over time
 -- [s]
 vo2maxtime :: Double
@@ -28,81 +34,78 @@ ultracotime = 4*60.0*60.0
 -- [s] -> [m] -> [] -> [s] -> [m]
 distanceByTime' :: Double -> Double -> Double -> Double -> Double
 distanceByTime' time distance pvalue targettime = 
-  distance*(targettime/time)**(1/pvalue)
+  	distance*(targettime/time)**(1/pvalue)
 
 timeByDistance' :: Double -> Double -> Double -> Double -> Double
-timeByDistance' time distance p targetdistance = time * (targetdistance/distance)**p
+timeByDistance' time distance pvalue targetdistance = 
+	time * (targetdistance/distance)**pvalue
 
 ---- 
 
 pchooser' :: Parameters -> Double -> Double
-pchooser' p time
-  | time < vo2maxtime =  (pvalueMiddle p)
-  | time < ultracotime = (pvalueNormal p)
-  | otherwise =          (pvalueUltra  p)
+pchooser' pvalue time
+  | time < vo2maxtime =  (pvalueMiddle pvalue)
+  | time < ultracotime = (pvalueNormal pvalue)
+  | otherwise =          (pvalueUltra  pvalue)
 
 vo2maxdistance' :: Parameters -> Double -> Double -> Double
-vo2maxdistance' p time distance
-  | time < ultracotime = f (pchooser' p  time)
+vo2maxdistance' pvalue time distance
+  | time < ultracotime = f (pchooser' pvalue  time)
   | otherwise = distanceByTime' ultracotime 
-                (ultracodistance' p time distance) (pvalueNormal p) vo2maxtime
+                (ultracodistance' pvalue time distance) (pvalueNormal pvalue) vo2maxtime
   where 
     f x = distanceByTime' time distance x vo2maxtime
  
 -- Calculates the distance reached at the ultra cross-over
 ultracodistance' ::Parameters ->  Double -> Double -> Double
-ultracodistance' p time distance 
-  | time > vo2maxtime = f (pchooser' p time)
-  | otherwise = distanceByTime' vo2maxtime (vo2maxdistance' p time distance) (pvalueNormal p) ultracotime
+ultracodistance' pvalue time distance 
+  | time > vo2maxtime = f (pchooser' pvalue time)
+  | otherwise = distanceByTime' vo2maxtime (vo2maxdistance' pvalue time distance) (pvalueNormal pvalue) ultracotime
   where 
     f x = distanceByTime' time distance x ultracotime
 
 
 -- thing making distance predictions
-getdistancepredictor' :: Parameters -> Double -> Double -> Double -> Double
-getdistancepredictor' p time distance = 
+getDistancePredictor' :: Parameters -> Double -> Double -> Double -> Double
+getDistancePredictor' pvalue time distance = 
   \t ->   if t > vo2maxtime then 
-            distanceByTime'  ultracotime ucd (pchooser' p t) t
+            distanceByTime'  ultracotime ultraCrossoverDistance (pchooser' pvalue t) t
           else 
-            distanceByTime'  vo2maxtime v2d (pchooser' p t) t
+            distanceByTime'  vo2maxtime v2d (pchooser' pvalue t) t
   where 
-    ucd = ultracodistance' p time distance
-    v2d = vo2maxdistance' p time distance 
+    ultraCrossoverDistance = ultracodistance' pvalue time distance
+    v2d = vo2maxdistance' pvalue time distance 
 
-gettimepredictor' :: Parameters -> Double -> Double -> Double -> Double
-gettimepredictor' p time distance =
-  \d ->    if d > ucd then
-             timeByDistance' ultracotime ucd (pvalueUltra p) d
+getTimePredictor' :: Parameters -> Double -> Double -> Double -> Double
+getTimePredictor' pvalue time distance =
+  \d ->    if d > ultraCrossoverDistance then
+             timeByDistance' ultracotime ultraCrossoverDistance (pvalueUltra pvalue) d
            else 
              if d > v2d then 
-               timeByDistance' ultracotime ucd (pvalueNormal p) d
+               timeByDistance' ultracotime ultraCrossoverDistance (pvalueNormal pvalue) d
              else
-               timeByDistance' vo2maxtime v2d (pvalueMiddle p) d
+               timeByDistance' vo2maxtime v2d (pvalueMiddle pvalue) d
   where 
-    ucd = ultracodistance' p time distance
-    v2d = vo2maxdistance' p time distance
-
-normalParams = Parameters 1.12 1.07 1.3
+    ultraCrossoverDistance = ultracodistance' pvalue time distance
+    v2d = vo2maxdistance' pvalue time distance
 
 getPredictor :: Double -> Double -> Predictor
 getPredictor time distance =
     let parameters = normalParams in
-    getPredictorWithP parameters time distance
+    getPredictorWithParameters parameters time distance
 
-data Type = Normal | Kouros
-
-getTypedPredictor :: Type -> Double -> Double -> Predictor
+getTypedPredictor :: PredictorType -> Double -> Double -> Predictor
 getTypedPredictor type' time distance =
   case type' of
-    Normal -> getPredictorWithP (normalParams) time distance
-    Kouros -> getPredictorWithP (Parameters 1.12 1.07 1.2) time distance
+    Normal -> getPredictorWithParameters normalParams time distance
+    Kouros -> getPredictorWithParameters kourosParams time distance
 
-getPredictorWithP :: Parameters -> Double -> Double -> Predictor
-getPredictorWithP parameters time distance
+getPredictorWithParameters :: Parameters -> Double -> Double -> Predictor
+getPredictorWithParameters parameters time distance
   | time > 0.0 && distance > 0.0 = 
     Predictor 
-    (getdistancepredictor' parameters time distance) 
-    (gettimepredictor' parameters time distance)
+    (getDistancePredictor' parameters time distance) 
+    (getTimePredictor' parameters time distance)
     (vo2maxdistance' parameters time distance / vo2maxtime)
   | otherwise =  error "Nonpositive parameters"    
 

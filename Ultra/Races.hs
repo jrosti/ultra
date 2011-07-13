@@ -4,6 +4,7 @@ import Ultra
 import Converters
 import Data.Maybe
 import PredictionExts
+import Interval
 
 import Text.Printf
 
@@ -29,37 +30,38 @@ oneHour = 3600.0
 
 races :: [Race]            
 races = 
-  [Normal    "800m"         800,
-   TimeBased "6h rata"      (6 *  oneHour),
-   TimeBased "12h rata"     (12 * oneHour),
-   TimeBased "24h rata"     (24 * oneHour),
-   TimeBased "48h rata"     (48 * oneHour),
+   [ Normal    "800m"         800
+   , TimeBased "6h rata"      (6 *  oneHour)
+   , TimeBased "12h rata"     (12 * oneHour)
+   , TimeBased "24h rata"     (24 * oneHour)
+   , TimeBased "48h rata"     (48 * oneHour)
 
-   Normal    "100km"        100000,
-   Normal    "100 mailia"   161000,
-   Normal    "200km"        200000,
+   , Normal    "100km"        100000
+   , Normal    "100 mailia"   161000
+   , Normal    "200km"        200000
 
-   Trail     "Vaajakosken maastoultra"     60000 66000,
-   Trail     "Vaarojen ultra"              84000 105588,
-   Trail     "Mongolian Sunrise to Sunset" 100000 125100,
-   Trail     "Spartathlon"                 246000 280000,
+   , Trail     "Vaajakosken maastoultra"     60000 66000
+   , Trail     "Vaarojen ultra"              84000 105588
+   , Trail     "Mongolian Sunrise to Sunset" 100000 125100
+   , Trail     "Spartathlon"                 246000 280000
 
-   Interval "Ultraintervalli, 8x13km" 8 (3 * oneHour) 13000]
+   , Interval "Ultraintervalli, 8x13km" 8 (3 * oneHour) 13000
+   ]
   
 
 getRaceTime :: Predictor -> Race -> Double
 getRaceTime predictor race = case race of 
   Normal _ distance    -> timeByDistance predictor distance
   Trail _ _ hardness   -> timeByDistance predictor hardness
-  TimeBased _ t -> t
-  Interval _ _ _ _ -> 1.0
+  TimeBased _ time -> time
+  Interval _ repetitions delay legDistance -> getIntervalTimePrediction predictor repetitions delay legDistance
 
 getRaceDistance :: Predictor -> Race -> Double
 getRaceDistance predictor race = case race of
   Normal _ distance ->  distance
   Trail _ distance _ -> distance
   TimeBased _ time -> distanceByTime predictor time
-  Interval _ repetitions _ distance -> ((fromIntegral repetitions)::Double) * distance
+  Interval _ repetitions _ distance -> (fromIntegral repetitions) * distance
 
 -- TODO: Floats behave slightly different than in conventional langs?
 formatSpeed :: Double -> Double -> String

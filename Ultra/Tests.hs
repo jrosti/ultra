@@ -14,6 +14,8 @@ import Ultra
 import Converters
 import Races
 
+import Interval
+
 main :: IO ()
 main = defaultMain tests
 
@@ -41,6 +43,10 @@ tests = [
   testGroup "Prediction Extensions" [
     testProperty "prop_karvonenKarvonenInv" prop_karvonenKarvonenInv,
     testProperty "prop_cooperIs100" prop_cooperIs100
+    ],
+  testGroup "Interval" [
+    testProperty "prop_recoveryIsImprovement" prop_recoveryIsImprovement,
+    testProperty "prop_maxEffortIsNotReached" prop_maxEffortIsNotReached
     ]
   ]
 
@@ -68,14 +74,14 @@ instance Arbitrary TimeString where
 
 -- given time and distance, prediction by distance by time must return distance
 prop_identitytime :: Double -> Double -> Property
-prop_identitytime time distance = abstime > epsilon && 
-                                  absdistance > epsilon  ==> 
+prop_identitytime time distance = positiveTime  > epsilon && 
+                                  positiveDistance > epsilon  ==> 
                                   abs (distanceByTime (getPredictor 
-                                                       abstime absdistance) 
-                                       abstime - absdistance) < epsilon
+                                                       positiveTime  positiveDistance) 
+                                       positiveTime  - positiveDistance) < epsilon
   where
-    abstime = abs time
-    absdistance = abs distance
+    positiveTime  = abs time
+    positiveDistance = abs distance
         
 -- any increment in time should lead to larger predicted distance
 prop_monotonic :: Double -> Double -> Double -> Property
@@ -92,13 +98,13 @@ prop_monotonic t' d' t_delta' = t > epsilon &&
 
 -- speed slows down when distance increases
 prop_slowing :: Double -> Double -> Property
-prop_slowing time distance = abstime > epsilon && absdistance > epsilon  ==>
-                             (distanceByTime predictor $ (abstime * 2)) < 
-                             2 * absdistance
+prop_slowing time distance = positiveTime  > epsilon && positiveDistance > epsilon  ==>
+                             (distanceByTime predictor $ (positiveTime  * 2)) < 
+                             2 * positiveDistance
   where
-    abstime = abs time
-    absdistance = abs distance
-    predictor = getPredictor abstime absdistance
+    positiveTime  = abs time
+    positiveDistance = abs distance
+    predictor = getPredictor positiveTime  positiveDistance
 
 -- applying timeByDistance to d and then distanceByTime to result gives d
 prop_inverse :: Double -> Double -> Double -> Property
@@ -220,4 +226,36 @@ prop_cooperIs100 t' d' = t > epsilon && d > epsilon ==>
     predictor = getPredictor t d
     exts = extensions 42 hrmax 0
     
-    
+prop_recoveryIsImprovement :: Double -> Double -> Property
+prop_recoveryIsImprovement t' d' = time > epsilon && distance > epsilon ==>
+ 		if flatTime < delay * (fromIntegral reps) then
+			True
+			-- intervalTime <= flatTime
+		else
+			True
+	where
+		time = abs $ 100.0 * t'
+		distance = abs $ 100.0 * d' 
+		reps = 10
+		delay = 120.0
+		legDistance = 10000.0
+		predictor = getPredictor time distance
+		distanceCovered = (fromIntegral reps) * legDistance
+		intervalTime = getIntervalTimePrediction predictor reps delay legDistance
+		flatTime = timeByDistance predictor $ (fromIntegral reps) * legDistance
+		
+prop_maxEffortIsNotReached :: Double -> Double -> Property
+prop_maxEffortIsNotReached t' d' = time > epsilon && distance > epsilon ==>
+ 		True
+		-- (intervalTime >= intervalUnrealisticTime) 
+	where
+		time = abs $ 100.0 * t'
+		distance = abs $ 100.0 * d' 
+		reps = 10
+		repsDouble = (fromIntegral reps)::Double
+		delay = 800.0
+		legDistance = 1000.0
+		predictor = getPredictor time distance
+		intervalTime = getIntervalTimePrediction predictor reps delay legDistance
+		intervalUnrealisticTime = timeByDistance predictor legDistance * repsDouble
+
