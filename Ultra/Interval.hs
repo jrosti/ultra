@@ -20,9 +20,6 @@ getTime interval = repetitions interval * legDistance interval / intervalPace in
 
 intervalPace :: Interval -> Double
 intervalPace interval = 
-	if (trueRecoveryFraction interval >= 1) then
-		minPace
-	else 
 		maxPace - (maxPace - minPace) * trueRecoveryFraction interval
 	where 
 		maxPace = legPaceAtMaxEffort interval
