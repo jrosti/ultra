@@ -41,7 +41,7 @@ races =
    , Normal    "200km"        200000
 
    , Trail     "Vaajakosken maastoultra"     60000 66500
-   , Trail     "Vaarojen ultra"              84000 115588
+   , Trail     "Vaarojen ultra"              84000 114320
    , Trail     "Mongolian Sunrise to Sunset" 100000 125100
    , Trail     "Spartathlon"                 246000 280000
 
