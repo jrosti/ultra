@@ -47,6 +47,8 @@ races =
 
    , Interval "Ultraintervalli, 8x13km / 3h " 8 (3 * oneHour) 13000
    , Interval "Tonnit, 5x1km / 6min" 5 (6 * 60.0) 1000
+   , Interval "Yassot, 10x800m / 6min" 10 (6 * 60.0) 800
+   , Interval "4x400m / 5min" 4 (5 * 60.0) 400
 
    ]
   
