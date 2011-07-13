@@ -16,19 +16,19 @@ getIntervalTimePrediction predictor repetitions delay legDistance =
 -- private parts
 
 getTime :: Interval -> Double
-getTime interval = repetitions interval * legDistance interval / intervalPace interval 
+getTime interval = repetitions interval * legDistance interval * intervalPace interval 
 
 intervalPace :: Interval -> Double
 intervalPace interval = 
-		maxPace - (maxPace - minPace) * trueRecoveryFraction interval
+		maxPace + (minPace - maxPace) * trueRecoveryFraction interval
 	where 
 		maxPace = legPaceAtMaxEffort interval
-		minPace = distanceCovered interval / timeWithoutRecovery interval
+		minPace = timeWithoutRecovery interval / distanceCovered interval
 
 
 legPaceAtMaxEffort :: Interval -> Double
 legPaceAtMaxEffort interval = 
-		distance / timeByDistance predictor distance
+		timeByDistance predictor distance / distance 
 	where 
 		predictor = performancePredictor interval
 		distance = legDistance interval
