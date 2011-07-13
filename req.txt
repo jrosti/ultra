@@ -1,0 +1,9 @@
+POST /hs/ultra.cgi HTTP/1.1
+Accept: application/json
+Content-Encoding: identity
+Content-Length: 38
+Content-Type: application/json
+Host: koirataksi.info
+
+
+{"time":"00:02:31.8","distance":"800","resthr":"42","maxhr":"192","weight":"80","kouros":"normal"}

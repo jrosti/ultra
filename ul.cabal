@@ -1,0 +1,47 @@
+-- Instructions on how to write this file are in the Cabal
+-- documentation, which can be found here:
+--   http://haskell.org/cabal/release/cabal-latest/doc/users-guide/
+
+
+build-type: Custom
+name: ul
+version: 1.0.0.0
+license: BSD3
+license-file: LICENSE
+copyright: (c) Jari Rosti
+author: Jari Rosti
+maintainer: Jari Rosti <jari.rosti@gmail.com>
+bug-reports: mailto:jari.rosti@gmail.com
+stability: stable
+synopsis: Predicts ultradistance running results
+category: Console, Text
+cabal-version: >= 1.6
+ 
+
+Description:
+	Ultradistance running predictor.
+
+flag test
+  default: True
+
+
+executable ultra
+  hs-source-dirs: Ultra
+  main-is: Main.hs
+  build-depends: base > 4.0, parsec
+  ghc-options: -threaded 
+
+executable ultra.cgi
+  hs-source-dirs: Ultra
+  main-is: JSONcgi.hs
+  build-depends: haskell98, base > 4.0, parsec, cgi,json
+  ghc-options: -threaded 
+
+
+executable test
+  hs-source-dirs: Ultra
+  main-is: Tests.hs
+  build-depends: base > 4.0, parsec, QuickCheck > 2, test-framework, test-framework-quickcheck2, test-framework-hunit, HUnit
+  ghc-options: -threaded 
+
+	
