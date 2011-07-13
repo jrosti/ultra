@@ -229,8 +229,7 @@ prop_cooperIs100 t' d' = t > epsilon && d > epsilon ==>
 prop_recoveryIsImprovement :: Double -> Double -> Property
 prop_recoveryIsImprovement t' d' = time > epsilon && distance > epsilon ==>
  		if flatTime < delay * (fromIntegral reps) then
-			True
-			-- intervalTime <= flatTime
+			intervalTime <= flatTime
 		else
 			True
 	where
@@ -246,8 +245,8 @@ prop_recoveryIsImprovement t' d' = time > epsilon && distance > epsilon ==>
 		
 prop_maxEffortIsNotReached :: Double -> Double -> Property
 prop_maxEffortIsNotReached t' d' = time > epsilon && distance > epsilon ==>
- 		True
-		-- (intervalTime >= intervalUnrealisticTime) 
+		True
+		-- intervalTime <= intervalUnrealisticTime 
 	where
 		time = abs $ 100.0 * t'
 		distance = abs $ 100.0 * d' 
