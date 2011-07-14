@@ -67,7 +67,6 @@ getRaceDistance predictor race = case race of
   TimeBased _ time -> distanceByTime predictor time
   Interval _ repetitions _ distance -> (fromIntegral repetitions) * distance
 
--- TODO: Floats behave slightly different than in conventional langs?
 formatSpeed :: Double -> Double -> String
 formatSpeed time distance = 
   let timeticks = 0.001 + (fromIntegral $ round time)::Double 
@@ -79,17 +78,33 @@ formatSpeed time distance =
   in
   printf "%02.f:%02.fmin/km" paceminutes paceseconds
 
+timeDecorator :: Double -> Race -> String
+timeDecorator raceTime (Interval _ reps _ _) =
+		raceTimeString
+		++ 
+		" (" 
+		++
+		(fromJust $ fromTime  $ raceTime / fromIntegral reps) 
+		++
+		")"
+	where
+		raceTimeString = fromJust $ fromTime raceTime
+
+timeDecorator raceTime race = fromJust $ fromTime raceTime
+
+
 getPrediction :: Predictor -> Extensions -> Race -> [(String, String)]
 getPrediction predictor pexts race = 
-  let raceTime = getRaceTime predictor 
-      raceDistance = getRaceDistance predictor in
+  let raceTimeGetter = getRaceTime predictor 
+      raceDistance = getRaceDistance predictor
+      raceTime = raceTimeGetter race in
   [ ("name", name race)
-  , ("time", fromJust $ fromTime  $ raceTime race)
+  , ("time", timeDecorator raceTime race)
   , ("distance", fromDistance $ raceDistance race)
-  , ("speed", formatSpeed (raceTime race) (raceDistance race))
+  , ("speed", formatSpeed raceTime (raceDistance race))
   ] 
   ++ 
-  predictionExts predictor pexts (raceTime race)
+  predictionExts predictor pexts raceTime
    
    
 predictions :: Predictor -> [[(String, String)]]
