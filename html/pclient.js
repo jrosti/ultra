@@ -17,11 +17,11 @@ function submitPrediction() {
 		      : "normal"
                     }; 
     $('#waiting').show();
-    $.post( "hs/ultra.cgi"
+    $.post( "cmd/ultra.cgi"
 	      , JSON.stringify(jsonQuery) 
 	      , function(result) {
-	           showPrediction(result);
-			   $('#waiting').hide();
+				$('#waiting').hide();
+	           	showPrediction(result);
 	        }
 	      , "json");
 }
