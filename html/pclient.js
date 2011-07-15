@@ -28,6 +28,7 @@ function submitPrediction() {
 }
 
 function showPrediction(result) {
+	$('#result').show();
     if (result[0].hasOwnProperty('error')) {
  	$('#result').html(result[0].error);
 	$('#result').reload(true);
@@ -36,7 +37,6 @@ function showPrediction(result) {
     }
     var i = 0; 
     $('#result').html("<hr>Ennuste perustuen aikaan: " + result[0].time +" matkalle "+ result[0].distance +".");
-	$('#result').show();
     var rowCount = $('#predictions tr').length;
     for (i = 0; i < rowCount -1; i++) {
 	$('#predictions tr:last').remove()
