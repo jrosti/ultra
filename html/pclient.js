@@ -16,7 +16,7 @@ function submitPrediction() {
 		      , "kouros"   : $('#kouros').is(':checked') ? "kouros" 
 		      : "normal"
                     }; 
-    $('#predictions').hide();
+	$('#result').hide();
     $('#waiting').show();
     $.post( "cmd/ultra.cgi"
 	      , JSON.stringify(jsonQuery) 
@@ -36,6 +36,7 @@ function showPrediction(result) {
     }
     var i = 0; 
     $('#result').html("<hr>Ennuste perustuen aikaan: " + result[0].time +" matkalle "+ result[0].distance +".");
+	$('#result').show();
     var rowCount = $('#predictions tr').length;
     for (i = 0; i < rowCount -1; i++) {
 	$('#predictions tr:last').remove()
