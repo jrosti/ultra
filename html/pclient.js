@@ -1,5 +1,6 @@
 $(document).ready(function() {
   $('#predictions').hide();
+  $('#waiting').hide();
   $('#predictionform').submit(function() {
     submitPrediction();
     return false;
@@ -15,12 +16,14 @@ function submitPrediction() {
 		      , "kouros"   : $('#kouros').is(':checked') ? "kouros" 
 		      : "normal"
                     }; 
+    $('#waiting').show();
     $.post( "hs/ultra.cgi"
-	  , JSON.stringify(jsonQuery) 
-	  , function(result) {
-	        showPrediction(result);
-	    }
-	  , "json");
+	      , JSON.stringify(jsonQuery) 
+	      , function(result) {
+	           showPrediction(result);
+			   $('#waiting').hide();
+	        }
+	      , "json");
 }
 
 function showPrediction(result) {
