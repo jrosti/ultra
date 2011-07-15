@@ -36,6 +36,7 @@ races =
    , TimeBased "24h rata"     (24 * oneHour)
    , TimeBased "48h rata"     (48 * oneHour)
 
+   , Normal    "Maraton"      42195
    , Normal    "100km"        100000
    , Normal    "100 mailia"   161000
    , Normal    "200km"        200000

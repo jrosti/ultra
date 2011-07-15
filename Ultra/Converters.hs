@@ -7,7 +7,7 @@ import Text.Printf
 import Monad
 import Data.Maybe
 
-import Text.ParserCombinators.Parsec
+import Text.ParserCombinators.Parsec 
 
 readMaybeConditionDouble :: (Double->Bool) -> String -> Maybe Double
 readMaybeConditionDouble cnd s = ((fmap fst . listToMaybe . reads) s)  
