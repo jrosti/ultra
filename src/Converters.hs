@@ -4,7 +4,7 @@ module Converters(fromTime, toTime, fromDistance,
 
 import Text.Printf
 
-import Monad
+import Control.Monad
 import Data.Maybe
 
 import Text.ParserCombinators.Parsec 

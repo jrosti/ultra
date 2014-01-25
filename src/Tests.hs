@@ -5,7 +5,7 @@ import Test.Framework.Providers.QuickCheck2 (testProperty)
 import Test.HUnit
 import Test.QuickCheck
 
-import Monad
+import Control.Monad
 import Data.Maybe
 import Text.Printf
 

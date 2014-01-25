@@ -1,2 +1,0 @@
-git pull
-cabal install && dist/build/test/test && cp ~/.cabal/bin/ultra.cgi ~/lumikki/webroot/cmd
