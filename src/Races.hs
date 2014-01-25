@@ -28,28 +28,35 @@ data Race =
 oneHour :: Double
 oneHour = 3600.0
 
+
 races :: [Race]            
 races = 
-   [ Normal    "800m"         800
-   , TimeBased "6h rata"      (6 *  oneHour)
-   , TimeBased "12h rata"     (12 * oneHour)
-   , TimeBased "24h rata"     (24 * oneHour)
-   , TimeBased "48h rata"     (48 * oneHour)
+   [ Normal    "800 m"         800
+   , Normal    "1500 m"         1500
+   , Normal    "3000 m"         3000
+   , Normal    "5000 m"         5000
 
+   , TimeBased "Cooper"      (12 *  60.0)
+   , TimeBased "6 h rata"      (6 *  oneHour)
+   , TimeBased "12 h rata"     (12 * oneHour)
+   , TimeBased "24 h rata"     (24 * oneHour)
+   , TimeBased "48 h rata"     (48 * oneHour)
+
+   , Normal    "Kymppi"      10000
+   , Normal    "Puolimaraton" 21098
    , Normal    "Maraton"      42195
-   , Normal    "100km"        100000
+   , Normal    "100 km"        100000
    , Normal    "100 mailia"   161000
-   , Normal    "200km"        200000
+   , Normal    "200 km"        200000
 
    , Trail     "Vaajakosken maastoultra"     60000 66500
    , Trail     "Vaarojen ultra"              84000 114320
    , Trail     "Mongolian Sunrise to Sunset" 100000 125100
    , Trail     "Spartathlon"                 246000 280000
 
-   , Interval "Ultraintervalli, 8x13km / 3h " 8 (3 * oneHour) 13000
-   , Interval "Tonnit, 5x1km / 6min" 5 (6 * 60.0) 1000
-   , Interval "Yassot, 10x800m / 6min" 10 (6 * 60.0) 800
-   , Interval "4x400m / 5min" 4 (5 * 60.0) 400
+   , Interval "Tonnit, 5 x 1 km / 6 min" 5 (6 * 60.0) 1000
+   , Interval "Yassot, 10 x 800 m / 6 min" 10 (6 * 60.0) 800
+   , Interval "4 x 400 m / 5 min" 4 (5 * 60.0) 400
 
    ]
   
@@ -77,7 +84,7 @@ formatSpeed time distance =
       paceminutes = (fromIntegral $ (floor pace))::Double
       paceseconds = ((pace - paceminutes) * 60.0)::Double 
   in
-  printf "%02.f:%02.fmin/km" paceminutes paceseconds
+  printf "%02.f:%02.f/km" paceminutes paceseconds
 
 timeDecorator :: Double -> Race -> String
 timeDecorator raceTime (Interval _ reps _ _) =

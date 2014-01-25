@@ -76,4 +76,4 @@ fromTime t'
     seconds = mod (floor' t) 60
     
 fromDistance :: Double -> String
-fromDistance x = printf "%.3fkm" (x/1000.0::Double)
+fromDistance x = printf "%.3f km" (x/1000.0::Double)

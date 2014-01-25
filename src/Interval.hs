@@ -13,7 +13,6 @@ getIntervalTimePrediction :: Predictor -> Integer -> Double -> Double -> Double
 getIntervalTimePrediction predictor repetitions delay legDistance = 
 	getTime $ Interval predictor (fromIntegral repetitions) delay legDistance
 
--- private parts
 
 getTime :: Interval -> Double
 getTime interval = repetitions interval * legDistance interval * intervalPace interval 
