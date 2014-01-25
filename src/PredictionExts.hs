@@ -37,7 +37,7 @@ relativePower p t =
 
 fromPower :: Double -> String
 fromPower power  
-  | power > 0.0 = printf "%02d% %" ((round (100*power))::Int)
+  | power > 0.0 = printf "%02d&nbsp;%%" ((round (100*power))::Int)
   | otherwise = ""
                   
 extensions :: Double -> Double -> Double -> Extensions
