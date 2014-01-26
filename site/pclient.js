@@ -27,11 +27,15 @@ $(document).ready(function() {
   maxhrProperty.map(defaultV).assign($("#maxhrV"), "text");
   weightProperty.map(defaultV).assign($("#weightV"), "text");
 
-  timeProperty.and(distanceProperty).subscribe(function() {
+  timeProperty.filter(notNull).and(distanceProperty.filter(notNull)).throttle(700).subscribe(function() {
     submitPrediction();
   });
 
 })
+
+function notNull(val) {
+  return val !== null;
+}
 
 function ok(_) {
   return "ok";
