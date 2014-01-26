@@ -1,106 +1,124 @@
 <html>
 <head>
-<title>ultralaskuri</title>
-<META http-equiv="Content-Type" content="text/html;charset=utf-8"> 
+    <title>ultralaskuri</title>
+    <META http-equiv="Content-Type" content="text/html;charset=utf-8">
 
 
-<style type="text/css"> 
+    <style type="text/css">
 
-#result
-{
-font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
-}
+        #result
+        {
+            font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+        }
 
-#waiting
-{
-font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;	
-color:#0000ff;
-}
+        #waiting
+        {
+            font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+            color:#0000ff;
+        }
 
-#predictions
-{
-font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
-width:60%;
-border-collapse:collapse;
-}
-#predictions td, #predictions th 
-{
-font-size:1.2em;
-border:1px solid #98bf21;
-padding:3px 7px 2px 7px;
-}
-#predictions th 
-{
-font-size:1.0em;
-text-align:left;
-padding-top:5px;
-padding-bottom:4px;
-background-color:#A7C942;
-color:#fff;
-}
-#predictions tr.alt td 
-{
-color:#000;
-background-color:#EAF2D3;
-}
+        #predictions
+        {
+            font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+            width:60%;
+            border-collapse:collapse;
+        }
+        #predictions td, #predictions th
+        {
+            font-size:1.2em;
+            border:1px solid #98bf21;
+            padding:3px 7px 2px 7px;
+        }
+        #predictions th
+        {
+            font-size:1.0em;
+            text-align:left;
+            padding-top:5px;
+            padding-bottom:4px;
+            background-color:#A7C942;
+            color:#fff;
+        }
+        #predictions tr.alt td
+        {
+            color:#000;
+            background-color:#EAF2D3;
+        }
 
-label
-{
-width: 7em;
-float: left;
-text-align: right;
-margin-right: 0.5em;
-display: block
-}
+        label
+        {
+            width: 7em;
+            float: left;
+            text-align: right;
+            margin-right: 0.5em;
+            display: block
+        }
 
-.submit input
-{
-margin-left: 11em;
-}
-</style> 
+        .submit input
+        {
+            margin-left: 11em;
+        }
+    </style>
+    <script type="text/javascript" >
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-15548067-2']);
+        _gaq.push(['_trackPageview']);
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src = 'pclient.js' type = 'text/javascript'></script>
-<script type="text/javascript" >
- var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-15548067-2']);
-_gaq.push(['_trackPageview']);
-
-(function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
- })();
-</script>
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
 </head>
 <body>
-<div style="float:top;text-align:left;margin-top:50px"> 
-<p>Syötä aika muodossa hh:mm tai hh:mm:ss[.tt] ja matka metreinä. Sykearvot sekä painon (kg) voi jättää tyhjäksi.</p>
-<form id="predictionform" action="">
-<p><label for="distance">Matka</label> <input type="text"  size="10" maxlength="15" id="distance"></p>
-<p><label for="time">Aika</label><input type="text"  size="10" maxlength="15" id="time"></p>
-<p><label for="resthr">Leposyke</label><input type="text" size="10" maxlength="3" id="resthr"></p>
-<p><label for="maxhr">Maksimisyke</label><input type="text"  size="10" maxlength="3" id="maxhr"></p>
-<p><label for="maxhr">Paino</label><input type="text"  size="10" maxlength="3" id="weight"></p>
-<p><label for="kouros">Olen kouros</label><input type="checkbox" id="kouros">
-<p class="submit"><input type="submit" value="Ennusta"> </p>
-</form>
+<div style="text-align:left;margin-top:50px">
+    <form id="predictionform" action="">
+        <p>
+            <label for="distance">Matka</label>
+            <input type="text"  size="10" maxlength="15" id="distance">
+            <span id="distanceV" />
+        </p>
+        <p>
+            <label for="time">Aika</label>
+            <input type="text"  size="10" maxlength="15" id="time">
+            <span id="timeV" />
+        </p>
+        <p><label for="resthr">Leposyke</label>
+            <input type="text" size="10" maxlength="3" id="resthr" />
+            <span id="resthrV" />
+        </p>
+        <p>
+            <label for="maxhr">Maksimisyke</label>
+            <input type="text"  size="10" maxlength="3" id="maxhr">
+            <span id="maxhrV" />
+        </p>
+        <p>
+            <label for="weight">Paino</label>
+            <input type="text"  size="10" maxlength="3" id="weight">
+            <span id="weightV" />
+        </p>
+        <p><label for="kouros">Olen kouros</label><input type="checkbox" id="kouros">
+        <p class="submit"><input type="submit" value="Ennusta"> </p>
+    </form>
 </div>
 
-<div style="float:top;text-align:left;margin-top:0px">
-<p id="result"></p>
+<div style="text-align:left;margin-top:0px">
+    <p id="result"></p>
 </div>
 
-<div style="float:top;text-align:left;margin-top:0px">
-<p id="waiting">Kysely l&auml;hetetty, odotetaan vastausta.</p>
+<div style="text-align:left;margin-top:0px">
+    <p id="waiting">Kysely l&auml;hetetty, odotetaan vastausta.</p>
 </div>
 
 
-<div style="width=500px;margin-top:30px">
-<table id="predictions"> 
-<tr><th>Kisa</th><th>Aika</th><th>Matka</th><th>Vauhti</th><th>Teho</th> <th>Syke</th><th>Kalorit (kcal)</th><th>CO2 päästöt</th></tr>
-</table>
+<div style="width:500px;margin-top:30px">
+    <table id="predictions">
+        <tr><th>Kisa</th><th>Aika</th><th>Matka</th><th>Vauhti</th><th>Teho</th> <th>Syke</th><th>Kalorit (kcal)</th></tr>
+    </table>
 </div>
 </body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/bacon.js/0.7.0/Bacon.min.js"></script>
+<script src = 'pclient.js' type = 'text/javascript'></script>
 </html>
 

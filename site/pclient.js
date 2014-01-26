@@ -5,7 +5,65 @@ $(document).ready(function() {
     submitPrediction();
     return false;
   });
+
+  // validation
+  var timeProperty = textFieldValue($("#time"))
+    .map(reValidator(/^\d+:\d+($|:\d+$|:\d+\.\d+$)/));
+  timeProperty.map(validation("Syötä aika muodossa hh:mm tai hh:mm:ss[.tt] ", ok))
+    .assign($("#timeV"), "text");
+
+  var distanceProperty = textFieldValue($("#distance")).map(isNumber);
+  distanceProperty.map(validation("Syötä matka metreinä", function(x) { return x + " m"}))
+    .assign($("#distanceV"), "text");
+
+  var defaultV = validation("Syötä numero", ok);
+
+  var resthrProperty = textFieldValue($("#resthr")).map(isNumber);
+  var maxhrProperty = textFieldValue($("#maxhr")).map(isNumber);
+
+  var weightProperty = textFieldValue($("#weight")).map(isNumber);
+
+  resthrProperty.map(defaultV).assign($("#resthrV"), "text");
+  maxhrProperty.map(defaultV).assign($("#maxhrV"), "text");
+  weightProperty.map(defaultV).assign($("#weightV"), "text");
+
+  timeProperty.and(distanceProperty).subscribe(function() {
+    submitPrediction();
+  });
+
 })
+
+function ok(_) {
+  return "ok";
+}
+
+function reValidator(re) {
+  return function(x) {
+    var m = x.match(re);
+    return m !== null ? m[0] : null;
+  }
+}
+
+function validation(errorText, successFunction) {
+  return function(val) {
+    if (val === null) {
+      return errorText;
+    } else {
+      return successFunction(val);
+    }
+  }
+}
+
+function isNumber(x) {
+  return reValidator(/\d+/)(x);
+}
+
+function textFieldValue(textField) {
+  function value() {
+    return textField.val();
+  }
+  return textField.asEventStream("keyup").map(value).toProperty(value());
+}
 
 function submitPrediction() {
     var jsonQuery = {   "time"     : $('#time').val()
@@ -31,7 +89,7 @@ function showPrediction(result) {
 	$('#result').show();
     if (result[0].hasOwnProperty('error')) {
  	$('#result').html(result[0].error);
-	$('#result').reload(true);
+	//$('#result').reload(true);
 	$('#predictions').hide();
 	return;
     }
@@ -49,9 +107,7 @@ function showPrediction(result) {
 					+ result[i].speed    + "</td><td>" 
 					+ result[i].power    + "</td><td>"
 					+ result[i].hr       + "</td><td>"
-					+ result[i].kcal     + "</td><td>"
-					+ result[i].co2       + "</td></tr>"
-				       );
+					+ result[i].kcal     + "</td></tr>");
     }
     $('#predictions').show();
 }
