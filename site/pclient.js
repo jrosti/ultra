@@ -9,14 +9,14 @@ $(document).ready(function() {
   // validation
   var timeProperty = textFieldValue($("#time"))
     .map(reValidator(/^\d+:\d+($|:\d+$|:\d+\.\d+$)/));
-  timeProperty.map(validation("Syötä aika muodossa hh:mm tai hh:mm:ss[.tt] ", ok))
+  timeProperty.map(validationMessage("Syötä aika muodossa hh:mm tai hh:mm:ss[.tt] ", ok))
     .assign($("#timeV"), "text");
 
   var distanceProperty = textFieldValue($("#distance")).map(isNumber);
-  distanceProperty.map(validation("Syötä matka metreinä", function(x) { return x + " m"}))
+  distanceProperty.map(validationMessage("Syötä matka metreinä", function(x) { return x + " m"}))
     .assign($("#distanceV"), "text");
 
-  var defaultV = validation("Syötä numero", ok);
+  var defaultV = validationMessage("Syötä numero", ok);
 
   var resthrProperty = textFieldValue($("#resthr")).map(isNumber);
   var maxhrProperty = textFieldValue($("#maxhr")).map(isNumber);
@@ -27,6 +27,7 @@ $(document).ready(function() {
   maxhrProperty.map(defaultV).assign($("#maxhrV"), "text");
   weightProperty.map(defaultV).assign($("#weightV"), "text");
 
+  // automatic fetch of results.
   var basicProperty = timeProperty.filter(notNull).and(distanceProperty.filter(notNull));
   basicProperty.throttle(300).subscribe(submitPrediction);
   var basicAndHrProperty = basicProperty.and(resthrProperty.filter(notNull)).and(maxhrProperty.filter(notNull));
@@ -49,7 +50,7 @@ function reValidator(re) {
   }
 }
 
-function validation(errorText, successFunction) {
+function validationMessage(errorText, successFunction) {
   return function(val) {
     if (val === null) {
       return errorText;
