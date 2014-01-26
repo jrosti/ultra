@@ -27,10 +27,11 @@ $(document).ready(function() {
   maxhrProperty.map(defaultV).assign($("#maxhrV"), "text");
   weightProperty.map(defaultV).assign($("#weightV"), "text");
 
-  timeProperty.filter(notNull).and(distanceProperty.filter(notNull)).throttle(700).subscribe(function() {
-    submitPrediction();
-  });
-
+  var basicProperty = timeProperty.filter(notNull).and(distanceProperty.filter(notNull));
+  basicProperty.throttle(300).subscribe(submitPrediction);
+  var basicAndHrProperty = basicProperty.and(resthrProperty.filter(notNull)).and(maxhrProperty.filter(notNull));
+  basicAndHrProperty.throttle(300).subscribe(submitPrediction);
+  basicAndHrProperty.and(weightProperty.filter(notNull)).throttle(300).subscribe(submitPrediction);
 })
 
 function notNull(val) {
@@ -66,52 +67,53 @@ function textFieldValue(textField) {
   function value() {
     return textField.val();
   }
-  return textField.asEventStream("keyup").map(value).toProperty(value());
+  var keyups = textField.asEventStream("keyup");
+  var changes = textField.asEventStream("change");
+  return keyups.merge(changes).map(value).toProperty(value());
 }
 
 function submitPrediction() {
-    var jsonQuery = {   "time"     : $('#time').val()
-                      , "distance" : $('#distance').val() 
-                      , "resthr"   : $('#resthr').val() 
-                      , "maxhr"    : $('#maxhr').val()
-                      , "weight"   : $('#weight').val()
-		      , "kouros"   : $('#kouros').is(':checked') ? "kouros" 
-		      : "normal"
-                    }; 
-	$('#result').hide();
-    $('#waiting').show();
-    $.post( "/hs/rest/prediction"
-	      , JSON.stringify(jsonQuery) 
-	      , function(result) {
-				$('#waiting').hide();
-	           	showPrediction(result);
-	        }
-	      , "json");
+  var jsonQuery = {   "time"     : $('#time').val()
+    , "distance" : $('#distance').val()
+    , "resthr"   : $('#resthr').val()
+    , "maxhr"    : $('#maxhr').val()
+    , "weight"   : $('#weight').val()
+    , "kouros"   : $('#kouros').is(':checked') ? "kouros"
+      : "normal"
+  };
+  $('#waiting').show();
+  $.post( "/hs/rest/prediction"
+    , JSON.stringify(jsonQuery)
+    , function(result) {
+      $('#waiting').hide();
+      showPrediction(result);
+    }
+    , "json");
 }
 
 function showPrediction(result) {
-	$('#result').show();
-    if (result[0].hasOwnProperty('error')) {
- 	$('#result').html(result[0].error);
-	//$('#result').reload(true);
-	$('#predictions').hide();
-	return;
-    }
-    var i = 0; 
-    $('#result').html("<hr>Ennuste perustuen aikaan: " + result[0].time +" matkalle "+ result[0].distance +".");
-    var rowCount = $('#predictions tr').length;
-    for (i = 0; i < rowCount -1; i++) {
-	$('#predictions tr:last').remove()
-    }
-    for (i = 1; i < result.length; i++) {
-	$('#predictions tr:last').after("<tr><td>" 
-					+ result[i].name     + "</td><td>" 
-					+ result[i].time     + "</td><td>" 
-					+ result[i].distance + "</td><td>"
-					+ result[i].speed    + "</td><td>" 
-					+ result[i].power    + "</td><td>"
-					+ result[i].hr       + "</td><td>"
-					+ result[i].kcal     + "</td></tr>");
-    }
-    $('#predictions').show();
+  $('#result').show();
+  if (result[0].hasOwnProperty('error')) {
+    $('#result').html(result[0].error);
+    //$('#result').reload(true);
+    $('#predictions').hide();
+    return;
+  }
+  var i = 0;
+  $('#result').html("<hr>Ennuste perustuen aikaan: " + result[0].time +" matkalle "+ result[0].distance +".");
+  var rowCount = $('#predictions tr').length;
+  for (i = 0; i < rowCount -1; i++) {
+    $('#predictions tr:last').remove()
+  }
+  for (i = 1; i < result.length; i++) {
+    $('#predictions tr:last').after("<tr><td>"
+      + result[i].name     + "</td><td>"
+      + result[i].time     + "</td><td>"
+      + result[i].distance + "</td><td>"
+      + result[i].speed    + "</td><td>"
+      + result[i].power    + "</td><td>"
+      + result[i].hr       + "</td><td>"
+      + result[i].kcal     + "</td></tr>");
+  }
+  $('#predictions').show();
 }
